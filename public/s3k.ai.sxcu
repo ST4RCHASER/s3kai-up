@@ -1,0 +1,14 @@
+﻿{
+  "Version": "14.1.0",
+  "Name": "s3k.ai",
+  "DestinationType": "ImageUploader, TextUploader, FileUploader",
+  "RequestMethod": "POST",
+  "RequestURL": "https://up.s3k.ai/upload",
+  "Body": "MultipartFormData",
+  "Arguments": {
+    "expire": "604800"
+  },
+  "FileFormName": "file",
+  "URL": "{json:url}",
+  "ErrorMessage": "{json:message}"
+}
