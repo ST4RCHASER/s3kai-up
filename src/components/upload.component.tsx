@@ -87,6 +87,20 @@ export const Upload = () => {
               </p>
             </div>
             <p>Temporary uploads up to 1GiB are allowed</p>
+            <div class="hidden md:block mt-4">
+              <p>
+                Need more than 15 days?
+                <br />
+                Check out m1rai for long time storage:{' '}
+                <a
+                  href="https://up.m1r.ai"
+                  target="_blank"
+                  class="underline absolute z-40 ml-2"
+                >
+                  Click here
+                </a>
+              </p>
+            </div>
           </div>
           <div class="px-4 py-2 z-40 absolute">
             <p>Expire after</p>
