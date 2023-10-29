@@ -8,7 +8,7 @@ export interface sekaiHistory {
   url: string;
   size: number;
   date: Date;
-  exp: Date;
+  exp: Date | number;
 }
 export interface sekaiValue {
   history: sekaiHistory[];
@@ -152,7 +152,7 @@ export const UploadCard = ({
           DATE: {displayData().date.toLocaleString()}
         </div>
         <div class="text-xs overflow-hidden text-ellipsis w-full">
-          EXP: {displayData().exp?.toLocaleString()}
+          EXP: {displayData().exp ? isNaN(+displayData().exp) ? displayData().exp.toLocaleString() : new Date(+displayData().exp).toLocaleString() : 'Never'}
         </div>
         <div
           class={`${errorMessage() && 'text-red-500 font-bold'
