@@ -23,6 +23,7 @@ export const UploadCard = ({
   isUploaded: boolean;
   preData: sekaiHistory | null;
 }) => {
+  const [showTimer, setShowTimer] = createSignal(0);
   const [copyState, setCopyState] = createSignal(false);
   const [progess, setProgress] = createSignal(0);
   const [progessData, setProgressData] = createSignal('0/0');
@@ -41,6 +42,28 @@ export const UploadCard = ({
     },
   );
 
+  const readableTime = (milliseconds: number) => {
+    if (milliseconds < 1) {
+      return 'Expired';
+    }
+    //10 year 10 month 10 day 10 hour 10 minute 10 second
+    const years = Math.floor(milliseconds / 31536000000);
+    const months = Math.floor((milliseconds % 31536000000) / 2592000000);
+    const days = Math.floor(((milliseconds % 31536000000) % 2592000000) / 86400000);
+    const hours = Math.floor((((milliseconds % 31536000000) % 2592000000) % 86400000) / 3600000);
+    const minutes = Math.floor(((((milliseconds % 31536000000) % 2592000000) % 86400000) % 3600000) / 60000);
+    const seconds = Math.floor((((((milliseconds % 31536000000) % 2592000000) % 86400000) % 3600000) % 60000) / 1000);
+    //If year is 0, don't show
+    const yearStr = years ? `${years} year ` : '';
+    const monthStr = months ? `${months} month ` : '';
+    const dayStr = days ? `${days} day ` : '';
+    const hourStr = hours ? `${hours} hour ` : '';
+    const minuteStr = minutes ? `${minutes} minute ` : '';
+    const secondStr = seconds ? `${seconds} second ` : '';
+    const combined = `${yearStr}${monthStr}${dayStr}${hourStr}${minuteStr}${secondStr} left`;
+    return combined;
+  }
+
   const dateToLocalString = (date: Date) => {
     //Current date +0 need to be fixed
     const dateStr = date.toLocaleDateString();
@@ -53,6 +76,33 @@ export const UploadCard = ({
   //1GB
   const DEFAULT_LIMIT_SIZE = 1024 * 1024 * 1024
   let timer: NodeJS.Timer;
+
+  const clock = setInterval(() => {
+    const exp = displayData().exp ? displayData().exp instanceof Date ? (displayData().exp as Date) : new Date(displayData().exp) : new Date()
+    setShowTimer(calcMillisec(exp))
+    if (showTimer() < 0) {
+      clearInterval(clock);
+      setProgress(calcPercent(exp));
+    }
+  })
+
+
+  const calcPercent = (expDate: Date) => {
+    //closest to exp less percent
+    const now = new Date().getTime();
+    const exp = expDate.getTime();
+    const diff = exp - now;
+    const percent = diff / (exp - new Date(expDate.getFullYear(), expDate.getMonth(), expDate.getDate()).getTime());
+    return percent;
+  }
+
+  const calcMillisec = (expDate: Date) => {
+    //closest to exp less percent
+    const now = new Date().getTime();
+    const exp = expDate.getTime();
+    const diff = exp - now;
+    return diff;
+  }
 
   createEffect(() => {
     if (file) {
@@ -161,7 +211,7 @@ export const UploadCard = ({
           DATE: {dateToLocalString(new Date(displayData().date.toString()))}
         </div>
         <div class="text-xs overflow-hidden text-ellipsis w-full">
-          EXP: {displayData().exp ? displayData().exp instanceof Date ? dateToLocalString(displayData().exp as Date) : dateToLocalString(new Date(displayData().exp)) : 'Never'}
+          EXP: {displayData().exp ? displayData().exp instanceof Date ? dateToLocalString(displayData().exp as Date) : new Date(displayData().exp).getTime() : 'Never'} ({readableTime(showTimer())})
         </div>
         <div
           class={`${errorMessage() && 'text-red-500 font-bold'
