@@ -17,7 +17,7 @@ export const Upload = () => {
   );
   const currentArray = JSON.parse((value as any).history || '[]');
   const newHistory = currentArray.filter((h: sekaiHistory) => {
-    if (!h.exp || (h.exp instanceof Date ? h.exp.getTime() : +h.exp) < new Date().getTime()) return false;
+    if (!new Date(h.exp).getTime() || (h.exp instanceof Date ? h.exp.getTime() : new Date(h.exp).getTime()) < new Date().getTime()) return false;
     return true;
   });
   setValue('history', JSON.stringify(newHistory));
