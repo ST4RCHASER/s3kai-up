@@ -81,7 +81,6 @@ export const UploadCard = ({
     const exp = displayData().exp ? displayData().exp instanceof Date ? (displayData().exp as Date) : new Date(displayData().exp) : new Date()
     setShowTimer(calcMillisec(exp))
     setProgress(calcPercent(exp) * 1000)
-    console.log(calcPercent(exp) * 1000)
     if (showTimer() < 0) {
       clearInterval(clock);
 
