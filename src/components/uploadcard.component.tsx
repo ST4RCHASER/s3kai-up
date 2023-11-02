@@ -221,9 +221,13 @@ export const UploadCard = ({
         <div class="text-xs overflow-hidden text-ellipsis w-full">
           DATE: {dateToLocalString(new Date(displayData().date.toString()))}
         </div>
-        <div class="text-xs overflow-hidden text-ellipsis w-full">
-          EXP: {displayData().exp ? displayData().exp instanceof Date ? dateToLocalString(displayData().exp as Date) : dateToLocalString(new Date(displayData().exp)) : 'Never'} ({readableTime(showTimer())})
-        </div>
+        {
+          isUploaded && (
+            <div class="text-xs overflow-hidden text-ellipsis w-full">
+              EXP: {displayData().exp ? displayData().exp instanceof Date ? dateToLocalString(displayData().exp as Date) : dateToLocalString(new Date(displayData().exp)) : 'Never'} ({readableTime(showTimer())})
+            </div>
+          )
+        }
         <div
           class={`${errorMessage() && 'text-red-500 font-bold'
             } text-xs overflow-hidden text-ellipsis w-full`}
