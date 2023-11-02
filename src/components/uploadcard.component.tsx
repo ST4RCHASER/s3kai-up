@@ -85,7 +85,7 @@ export const UploadCard = ({
       clearInterval(clock);
 
     }
-  })
+  }, 1000)
 
 
   const calcPercent = (expDate: Date) => {
