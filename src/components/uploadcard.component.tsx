@@ -44,7 +44,7 @@ export const UploadCard = ({
 
   const readableTime = (milliseconds: number) => {
     if (milliseconds < 1) {
-      return 'Expired';
+      return <div class='text-red-500 font-bold'>Expired</div>
     }
     //10 year 10 month 10 day 10 hour 10 minute 10 second
     const years = Math.floor(milliseconds / 31536000000);
@@ -80,9 +80,11 @@ export const UploadCard = ({
   const clock = setInterval(() => {
     const exp = displayData().exp ? displayData().exp instanceof Date ? (displayData().exp as Date) : new Date(displayData().exp) : new Date()
     setShowTimer(calcMillisec(exp))
+    setProgress(calcPercent(exp) * 1000)
+    console.log(calcPercent(exp) * 1000)
     if (showTimer() < 0) {
       clearInterval(clock);
-      setProgress(calcPercent(exp));
+
     }
   })
 
@@ -184,7 +186,7 @@ export const UploadCard = ({
           width: `${progess()}%`,
           'background-color':
             progess() < 100
-              ? 'rgba(0, 255, 0, 0.3)'
+              ? isUploaded ? 'rgba(0, 250, 255, 0.3)' : 'rgba(0, 255, 0, 0.3)'
               : errorMessage()
                 ? 'rgba(255, 0, 0, 0.3)'
                 : 'rgba(255, 255, 0, 0.3)',
