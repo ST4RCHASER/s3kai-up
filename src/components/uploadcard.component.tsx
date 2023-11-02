@@ -78,22 +78,20 @@ export const UploadCard = ({
   let timer: NodeJS.Timer;
 
   const clock = setInterval(() => {
-    const exp = displayData().exp ? displayData().exp instanceof Date ? (displayData().exp as Date) : new Date(displayData().exp) : new Date()
-    setShowTimer(calcMillisec(exp))
-    setProgress(calcPercent(exp) * 1000)
-    if (showTimer() < 0) {
-      clearInterval(clock);
-
-    }
+    runCalc()
   }, 1000)
 
+  function percentageDec(total, per) {
+    return (total - ((per / 100) * total));
+  }
 
-  const calcPercent = (expDate: Date) => {
-    //closest to exp less percent
+
+  const calcPercent = (expDate: Date, start: Date = new Date()) => {
     const now = new Date().getTime();
     const exp = expDate.getTime();
     const diff = exp - now;
-    const percent = diff / (exp - new Date(expDate.getFullYear(), expDate.getMonth(), expDate.getDate()).getTime());
+    const total = exp - start.getTime();
+    const percent = Math.round((diff / total) * 100);
     return percent;
   }
 
@@ -104,6 +102,18 @@ export const UploadCard = ({
     const diff = exp - now;
     return diff;
   }
+  const runCalc = () => {
+    const exp = displayData().exp ? displayData().exp instanceof Date ? (displayData().exp as Date) : new Date(displayData().exp) : new Date()
+    setShowTimer(calcMillisec(exp))
+    //Flip number 0 to 100 to 100 to 0
+    setProgress(percentageDec(100, calcPercent(exp, new Date(displayData().date))))
+    if (showTimer() < 0) {
+      setProgress(0)
+      clearInterval(clock);
+
+    }
+  }
+  runCalc()
 
   createEffect(() => {
     if (file) {
@@ -212,7 +222,7 @@ export const UploadCard = ({
           DATE: {dateToLocalString(new Date(displayData().date.toString()))}
         </div>
         <div class="text-xs overflow-hidden text-ellipsis w-full">
-          EXP: {displayData().exp ? displayData().exp instanceof Date ? dateToLocalString(displayData().exp as Date) : new Date(displayData().exp).getTime() : 'Never'} ({readableTime(showTimer())})
+          EXP: {displayData().exp ? displayData().exp instanceof Date ? dateToLocalString(displayData().exp as Date) : dateToLocalString(new Date(displayData().exp)) : 'Never'} ({readableTime(showTimer())})
         </div>
         <div
           class={`${errorMessage() && 'text-red-500 font-bold'
