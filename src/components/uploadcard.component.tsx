@@ -40,6 +40,15 @@ export const UploadCard = ({
       exp: new Date(),
     },
   );
+
+  const dateToLocalString = (date: Date) => {
+    //Current date +0 need to be fixed
+    const dateStr = date.toLocaleDateString();
+    const timeStr = date.toLocaleTimeString();
+    const combined = `${dateStr} ${timeStr}`;
+    return combined;
+  }
+
   const UPLOAD_ENDPOINT = 'https://up.s3k.ai/upload';
   //1GB
   const DEFAULT_LIMIT_SIZE = 1024 * 1024 * 1024
@@ -149,10 +158,10 @@ export const UploadCard = ({
           {isOK() ? displayData().name : file?.name || displayData().name}
         </div>
         <div class="text-xs overflow-hidden text-ellipsis w-full">
-          DATE: {displayData().date.toLocaleString()}
+          DATE: {dateToLocalString(new Date(displayData().date.toString()))}
         </div>
         <div class="text-xs overflow-hidden text-ellipsis w-full">
-          EXP: {displayData().exp ? isNaN(+displayData().exp) ? displayData().exp.toLocaleString() : new Date(+displayData().exp).toLocaleString() : 'Never'}
+          EXP: {displayData().exp ? displayData().exp instanceof Date ? dateToLocalString(displayData().exp as Date) : dateToLocalString(new Date(displayData().exp)) : 'Never'}
         </div>
         <div
           class={`${errorMessage() && 'text-red-500 font-bold'
